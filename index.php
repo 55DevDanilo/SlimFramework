@@ -1,9 +1,58 @@
 <?php
 
+use \Psr\Http\Message\ServerRequestInterface as Request;
+use \Psr\Http\Message\ResponseInterface as Response;
+
+
 require 'vendor/autoload.php';
 
 $app = new \Slim\App;
+///Padrão PSR7
+$app->get('/postagens', function (Request $request,Response $response) {
+    $response->getBody()->write("lista de postagens : Teste PSR7");
+    //echo "lista de postagens :";
+    return $response;
+});
 
+$app->delete('/usuarios/remove/{id}', function (Request $request,Response $response) {
+
+   $id = $request->getAttribute('id');
+
+    return $response->getBody()->write('sucesso no delete '.$id );
+    
+   
+});
+
+
+$app->put('/usuarios/atualiza', function (Request $request,Response $response) {
+
+    //recuperação do post 
+    $post = $request->getParsedBody();
+    $id =$post['id'];
+    $nome =$post['nome'];
+    $email= $post['email'];
+
+    return $response->getBody()->write('sucesso ao atualizar '.$id );
+    
+   
+});
+
+
+$app->post('/usuarios/adiciona', function (Request $request,Response $response) {
+
+    //recuperação do post 
+    $post = $request->getParsedBody();
+    $nome =$post['nome'];
+    $email= $post['email'];
+
+    return $response->getBody()->write($nome.' - '.$email);
+    
+    return $response;
+});
+
+
+$app->run();
+/*
 $app->get('/postagens[/{ano}[/{mes}]]', function ($request, $response) {
     $ano = $request->getAttribute('ano');
     $mes = $request->getAttribute('mes');
@@ -62,9 +111,4 @@ $app->get('/v1', function () {
     });
 });
 
-
-$app->run();
-
-
-
-?>
+*/
