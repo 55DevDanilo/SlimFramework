@@ -6,14 +6,48 @@ use \Psr\Http\Message\ResponseInterface as Response;
 
 require 'vendor/autoload.php';
 
-$app = new \Slim\App;
-///Padrão PSR7
+$app = new \Slim\App(
+    [
+        'settings' => [
+            'displayErrorDetails' => true
+        ]
+    ]
+);
+
+class Servico {}
+
+//$servico = new Servico;
+
+/*container pimple*/
+
+$conatainer = $app->getContainer();
+$conatainer['servico'] = function () {
+    return new Servico;
+};
+
+$app->get('/servico', function (Request $request, Response $response) {
+    $servico = $this->get('servico');
+    var_dump($servico);
+});
+
+
+/*Controllers como serviço*/
+$conatainer = $app->getContainer();
+$conatainer['home'] = function () {
+    return new  MyApp\controllers\Home(
+        new MyApp\View
+    );
+};
+
+$app->get('/usuario', '\MyApp\controllers\home:index');
+$app->run();
+/*///Padrão PSR7
 $app->get('/postagens', function (Request $request,Response $response) {
     $response->getBody()->write("lista de postagens : Teste PSR7");
     //echo "lista de postagens :";
     return $response;
 });
-
+/*
 $app->delete('/usuarios/remove/{id}', function (Request $request,Response $response) {
 
    $id = $request->getAttribute('id');
@@ -49,9 +83,9 @@ $app->post('/usuarios/adiciona', function (Request $request,Response $response) 
     
     return $response;
 });
+*/
 
 
-$app->run();
 /*
 $app->get('/postagens[/{ano}[/{mes}]]', function ($request, $response) {
     $ano = $request->getAttribute('ano');
